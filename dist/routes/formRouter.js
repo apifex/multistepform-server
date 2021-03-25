@@ -4,31 +4,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const form_controler_1 = require("../controllers/form-controler");
 const formRouter = express_1.default.Router();
 formRouter.use((req, res, next) => {
-    // TODO authentification
+    // TODO: authentification
     next();
 });
-const errorHandlar = (req, res, next) => {
-    try {
-        return next();
-    }
-    catch (err) {
-        console.log(err);
-        res.status(500).send("error catched");
-    }
-};
-formRouter.post('/create', errorHandlar, (req, res) => {
-    res.send('create form');
-});
-formRouter.post('/update', errorHandlar, (req, res) => {
-    res.send('upadate form ');
-});
-formRouter.post('/load', errorHandlar, (req, res) => {
-    res.send('load form');
-});
-formRouter.post('/delete', errorHandlar, (req, res) => {
-    res.send('delete form');
-});
+formRouter.post('/create', form_controler_1.createForm);
+formRouter.post('/update', form_controler_1.updateForm);
+formRouter.post('/get', form_controler_1.getForm);
+formRouter.post('/delete', form_controler_1.deleteForm);
 exports.default = formRouter;
 //# sourceMappingURL=formRouter.js.map

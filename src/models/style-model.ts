@@ -1,5 +1,5 @@
 import mongoose, { Schema }from 'mongoose'
-import db from '../settings/mongoConnection'
+import db from '../services/mongoConnection'
 
 
 interface IStyle {

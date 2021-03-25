@@ -24,8 +24,5 @@ userRouter.get('/login', errorHandlar, (req, res) => {
 userRouter.get('/signup', errorHandlar, (req, res) => {
     res.send('signup to server');
 });
-userRouter.get('/login', errorHandlar, (req, res) => {
-    res.send('login to server');
-});
 exports.default = userRouter;
 //# sourceMappingURL=userRouter.js.map

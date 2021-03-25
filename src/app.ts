@@ -4,16 +4,28 @@ import cors from 'cors'
 import userRouter from './routes/userRouter'
 import formRouter from './routes/formRouter'
 import clientRouter from './routes/clientRouter'
-import db from './settings/mongoConnection'
+import {userErrorsHandler, formErrorsHandler} from './services/errorHandler'
+import db, {connectToDb} from './services/mongoConnection'
 
-// start server
-const port = process.env.PORT || 5000
+
+// configure server
+const PORT = process.env.PORT || 5000
 const server = express()
   server.use(cors())
+  server.use(express.json())
+  server.use(express.urlencoded({extended: true}))
+  
+  server.get('/test', (req, res)=> {res.send('server works')})
+  
   server.use('/api/client', clientRouter)
-  server.use('/api/user', userRouter)
-  server.use('/api/form', formRouter)
-//services
+  server.use('/api/user', userRouter) 
+  server.use('/api/form', formRouter) //auth.required
+  server.use(formErrorsHandler)
+  server.use(userErrorsHandler)
+  
 
-console.log(db)
-server.listen(port, ()=> console.log('listening on port 4000'));
+// connect to db
+connectToDb().then(()=>
+  server.listen(PORT, ()=> console.log(`server is listening on port ${PORT}`))
+)
+

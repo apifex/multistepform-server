@@ -1,37 +1,46 @@
 import mongoose, { Schema }from 'mongoose'
 
+
+
 interface IProperties {
     [key: string]: string;
-}
+  }
   
-interface IForm {
-    formID: string,
-    element: string,
-    text: string,
-    properties: IProperties,
-}
+interface IStyle {
+    [key: string]: string
+  }
+  
+interface IElement {
+    element: string;
+    text?: string;
+    properties?: IProperties;
+    style?: IStyle;
+  }
+  
+export interface IForm {
+    name: string;
+    steps: IElement[][];
+    style?: IStyle;
+  }
+  
 
 interface IFormModelInterface extends mongoose.Model<any> {
     build(args: IForm): any
 }
 
 const FormSchema = new mongoose.Schema({
-    formID: {
+    name: {
         type: String,
         required: true
     },
-    element: {
-        type: String,
+    steps: {
+        type: Schema.Types.Mixed,
         required: true
     },
-    text: {
-        type: String,
-        required: false,
-    },
-    properties: {
+    style: {
         type: Schema.Types.Mixed,
         required: false,
-    }
+    },
 })
 
 FormSchema.statics.build = (args: IForm) => {

@@ -23,10 +23,6 @@ userRouter.get('/login', errorHandlar, (req: Request, res: Response) => {
 userRouter.get('/signup', errorHandlar, (req: Request, res: Response) => {
     res.send('signup to server')
 })
-
-userRouter.get('/login', errorHandlar, (req: Request, res: Response) => {
-    res.send('login to server')
-})
   
 export default userRouter;
 

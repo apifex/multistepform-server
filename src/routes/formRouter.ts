@@ -1,36 +1,21 @@
 import express, {NextFunction, Request, Response} from 'express';
+import {createForm, getForm, updateForm, deleteForm} from '../controllers/form-controler'
 
 const formRouter = express.Router();
 
 formRouter.use((req: Request, res: Response, next: NextFunction)=> {
-    // TODO authentification
+    // TODO: authentification
     next();
 })
 
-const errorHandlar = (req: Request, res: Response, next: NextFunction) => {
-    try{
-      return next ()
-    } catch (err) {
-        console.log(err)
-      res.status(500).send("error catched")
-    }
-  }
 
-formRouter.post('/create', errorHandlar, (req: Request, res: Response) => {
-    res.send('create form')
-})
+formRouter.post('/create', createForm)
 
-formRouter.post('/update', errorHandlar, (req: Request, res: Response) => {
-    res.send('upadate form ')
-})
+formRouter.post('/update', updateForm)
 
-formRouter.post('/load', errorHandlar, (req: Request, res: Response) => {
-    res.send('load form')
-})
+formRouter.get('/get', getForm)
 
-formRouter.post('/delete', errorHandlar, (req: Request, res: Response) => {
-    res.send('delete form')
-})
+formRouter.post('/delete', deleteForm)
   
 export default formRouter;
 

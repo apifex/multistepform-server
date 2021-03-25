@@ -21,22 +21,18 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const FormSchema = new mongoose_1.default.Schema({
-    formID: {
+    name: {
         type: String,
         required: true
     },
-    element: {
-        type: String,
+    steps: {
+        type: mongoose_1.Schema.Types.Mixed,
         required: true
     },
-    text: {
-        type: String,
-        required: false,
-    },
-    properties: {
+    style: {
         type: mongoose_1.Schema.Types.Mixed,
         required: false,
-    }
+    },
 });
 FormSchema.statics.build = (args) => {
     return new FormModel(args);
