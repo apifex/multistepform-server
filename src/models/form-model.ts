@@ -1,7 +1,5 @@
 import mongoose, { Schema }from 'mongoose'
 
-
-
 interface IProperties {
     [key: string]: string;
   }
@@ -23,7 +21,6 @@ export interface IForm {
     style?: IStyle;
   }
   
-
 interface IFormModelInterface extends mongoose.Model<any> {
     build(args: IForm): any
 }

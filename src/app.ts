@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import express, {NextFunction, Request, Response} from 'express'
+import express from 'express'
 import cors from 'cors'
 import userRouter from './routes/userRouter'
 import formRouter from './routes/formRouter'
@@ -14,14 +14,14 @@ const server = express()
   server.use(cors())
   server.use(express.json())
   server.use(express.urlencoded({extended: true}))
-  
-  server.get('/test', (req, res)=> {res.send('server works')})
-  
   server.use('/api/client', clientRouter)
   server.use('/api/user', userRouter) 
-  server.use('/api/form', formRouter) //auth.required
+  server.use('/api/form', formRouter) //auth.required 
   server.use(formErrorsHandler)
   server.use(userErrorsHandler)
+  
+  // test
+  server.get('/test', (req, res)=> {res.send('server works')})
   
 
 // connect to db

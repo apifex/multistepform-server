@@ -1,5 +1,5 @@
 import express, {NextFunction, Request, Response} from 'express';
-
+import {signUp, signIn} from '../controllers/user-controler'
 const userRouter = express.Router();
 
 userRouter.use((req: Request, res: Response, next: NextFunction)=> {
@@ -7,22 +7,9 @@ userRouter.use((req: Request, res: Response, next: NextFunction)=> {
     next();
 })
 
-const errorHandlar = (req: Request, res: Response, next: NextFunction) => {
-    try{
-      return next ()
-    } catch (err) {
-        console.log(err)
-      res.status(500).send("error catched")
-    }
-  }
+userRouter.get('/signin', signIn)
 
-userRouter.get('/login', errorHandlar, (req: Request, res: Response) => {
-    res.send('login to server')
-})
-
-userRouter.get('/signup', errorHandlar, (req: Request, res: Response) => {
-    res.send('signup to server')
-})
+userRouter.get('/signup', signUp)
   
 export default userRouter;
 

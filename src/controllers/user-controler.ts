@@ -1,8 +1,12 @@
+import {NextFunction, Request, Response} from 'express';
 import UserModel from '../models/user-model'
 
-const userControler = () => {
-    
-    console.log('user controler')
+export const signUp = async (req: Request, res: Response, next: NextFunction) => {
+   
+        res.status(200).send('signUp')
 }
 
-export default userControler
+export const signIn = async (req: Request, res: Response, next: NextFunction) => {
+   
+    res.status(200).send('signIn')
+}

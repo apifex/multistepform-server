@@ -7,22 +7,9 @@ clientRouter.use((req: Request, res: Response, next: NextFunction)=> {
     next();
 })
 
-const errorHandlar = (req: Request, res: Response, next: NextFunction) => {
-    try{
-      return next ()
-    } catch (err) {
-        console.log(err)
-      res.status(500).send("error catched")
-    }
-  }
+clientRouter.get('/load') //TODO loadForm
 
-clientRouter.get('/load', errorHandlar, (req: Request, res: Response) => {
-    res.send('load form')
-})
-
-clientRouter.post('/submit', errorHandlar, (req: Request, res: Response) => {
-    res.send('submit form')
-})
+clientRouter.post('/submit') //submitForm) //TODO
   
 export default clientRouter;
 
