@@ -50,7 +50,7 @@ interface IFormModelInterface extends mongoose.Model<any> {
 }
 
 const FormSchema = new mongoose.Schema({
-    userId: {
+    id: {
       type: String,
       required: true
     },

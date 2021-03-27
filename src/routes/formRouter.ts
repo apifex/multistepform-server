@@ -5,7 +5,7 @@ import {authenticate} from '../services/passport/authenticate'
 const formRouter = express.Router();
 
 // formRouter.use((req: Request, res: Response, next: NextFunction)=> {
-//     authenticate
+//     authenticate(req, res, next)
 //     next();
 // })
 

@@ -38,7 +38,6 @@ const authFields = {
     'signup',
     new Strategy(authFields, async (req, email, password, cb) => {
       try {
-        console.log('fire sign up')
       const checkEmail = await UserModel.checkExistingField('email', email);
   
         if (checkEmail) {

@@ -21,7 +21,7 @@ const createCookieFromToken = (user:any, statusCode: number, req: Request, res: 
 };
 
 export const signup = async (req: Request, res: Response, next: NextFunction) => {
-    passport.authenticate(
+    await passport.authenticate(
       "signup",
       { session: false },
       async (err, user, info) => {
@@ -44,8 +44,11 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
   }
 
 
-export const login = (req: Request, res: Response, next: NextFunction) => {
-    passport.authenticate("login", { session: false }, (err, user, info) => {
+export const login = async (req: Request, res: Response, next: NextFunction) => {
+    await passport.authenticate(
+      "login", 
+      { session: false }, 
+      (err, user, info) => {
       if (err || !user) {
         let message = err;
         if (info) {
@@ -63,11 +66,25 @@ export const login = (req: Request, res: Response, next: NextFunction) => {
     })(req, res, next);
   }
 
+export const socialAuth =  async (req: Request, res: Response) => {
+    try {
+      const { authInfo, user } = req;
+      createCookieFromToken(user, 200 || 201, req, res);
+    } catch (err) {
+      res.status(500).json({
+        status: 'error',
+        error: {
+          message: err.message,
+        },
+      });
+    }
+}
+
 export const protectedRoute = async (req: Request, res: Response) => {
     res.status(200).json({
       status: "success",
       data: {
-        message: "Yes you are. You are a Thor-n times developer",
+        message: "Hello in secret place",
       },
     });
   }

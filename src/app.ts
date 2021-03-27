@@ -20,7 +20,7 @@ const server = express()
   server.use(express.urlencoded({extended: true}))
   server.use(cookieParser())
   
-  passport.initialize()
+  server.use(passport.initialize())
   
   server.use('/api/client', clientRouter)
   server.use('/api/user', userRouter) 

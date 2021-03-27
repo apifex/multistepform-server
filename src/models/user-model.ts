@@ -20,7 +20,7 @@ interface IUserDocument extends IUser, mongoose.Document {
 } 
 
 interface IUserModel extends mongoose.Model<IUserDocument> {
-    checkExistingField(field: string, value: string): Promise<boolean>,
+    checkExistingField(field: string, value: string): Promise<IUserDocument | null>,
     build(args: IUser): any
 }
 
