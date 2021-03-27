@@ -1,21 +1,21 @@
 import express, {NextFunction, Request, Response} from 'express';
 import {createForm, getForm, updateForm, deleteForm} from '../controllers/form-controler'
+import {authenticate} from '../services/passport/authenticate'
 
 const formRouter = express.Router();
 
-formRouter.use((req: Request, res: Response, next: NextFunction)=> {
-    // TODO: authentification
-    next();
-})
+// formRouter.use((req: Request, res: Response, next: NextFunction)=> {
+//     authenticate
+//     next();
+// })
 
+formRouter.post('/create', authenticate, createForm)
 
-formRouter.post('/create', createForm)
+formRouter.post('/update', authenticate, updateForm)
 
-formRouter.post('/update', updateForm)
+formRouter.get('/get', authenticate, getForm)
 
-formRouter.get('/get', getForm)
-
-formRouter.post('/delete', deleteForm)
+formRouter.post('/delete', authenticate, deleteForm)
   
 export default formRouter;
 

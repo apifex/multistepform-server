@@ -15,25 +15,39 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteForm = exports.updateForm = exports.getForm = exports.createForm = void 0;
 const form_model_1 = __importDefault(require("../models/form-model"));
 const createForm = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const form = yield form_model_1.default.build(req.body).save().catch((err) => next(err));
+    const form = yield form_model_1.default
+        .build(req.body)
+        .save()
+        .catch((err) => next(err));
     res.status(200).send(form);
 });
 exports.createForm = createForm;
 const getForm = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const form = yield form_model_1.default.findOne({ name: req.query.name }).exec().catch((err) => next(err));
-    res.status(200).send(form);
+    const form = yield form_model_1.default
+        .findOne({ name: req.query.name })
+        .exec()
+        .catch((err) => next(err));
+    form ? res.status(200).send(form) : res.status(200).send('Form not found');
 });
 exports.getForm = getForm;
 const updateForm = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const form = yield form_model_1.default.findOne({ name: req.query.name }).exec().catch((err) => next(err));
+    const form = yield form_model_1.default
+        .findOne({ name: req.query.name })
+        .exec()
+        .catch((err) => next(err));
     form.set(req.body);
-    const updatedForm = yield form.save().catch((err) => next(err));
+    const updatedForm = yield form.save()
+        .catch((err) => next(err));
     res.status(200).send(updatedForm);
 });
 exports.updateForm = updateForm;
 const deleteForm = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const form = yield form_model_1.default.findOne({ name: req.query.name }).exec().catch((err) => next(err));
-    const removedForm = yield form.remove().catch((err) => next(err));
+    const form = yield form_model_1.default
+        .findOne({ name: req.query.name })
+        .exec()
+        .catch((err) => next(err));
+    const removedForm = yield form.remove()
+        .catch((err) => next(err));
     res.status(200).send(removedForm);
 });
 exports.deleteForm = deleteForm;

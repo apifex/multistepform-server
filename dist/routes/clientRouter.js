@@ -9,20 +9,7 @@ clientRouter.use((req, res, next) => {
     // TODO authentification
     next();
 });
-const errorHandlar = (req, res, next) => {
-    try {
-        return next();
-    }
-    catch (err) {
-        console.log(err);
-        res.status(500).send("error catched");
-    }
-};
-clientRouter.get('/load', errorHandlar, (req, res) => {
-    res.send('load form');
-});
-clientRouter.post('/submit', errorHandlar, (req, res) => {
-    res.send('submit form');
-});
+clientRouter.get('/load'); //TODO loadForm
+clientRouter.post('/submit'); //submitForm) //TODO
 exports.default = clientRouter;
 //# sourceMappingURL=clientRouter.js.map

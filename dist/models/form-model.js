@@ -20,7 +20,30 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
+//form sample
+const From = {
+    name: 'Form123',
+    steps: [
+        {
+            id: '11',
+            elements: [{ element: 'input', type: 'text', label: 'Imię' },
+                { element: 'input', type: 'checkbox', label: "Lubisz spać?" },
+            ]
+        },
+        {
+            id: '12',
+            elements: [{ element: 'input', type: 'text' },
+                { element: 'input', type: 'checkbox' },
+                { element: 'input', type: 'password' }
+            ]
+        }
+    ]
+};
 const FormSchema = new mongoose_1.default.Schema({
+    userId: {
+        type: String,
+        required: true
+    },
     name: {
         type: String,
         required: true

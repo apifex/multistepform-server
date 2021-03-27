@@ -12,7 +12,7 @@ formRouter.use((req, res, next) => {
 });
 formRouter.post('/create', form_controler_1.createForm);
 formRouter.post('/update', form_controler_1.updateForm);
-formRouter.post('/get', form_controler_1.getForm);
+formRouter.get('/get', form_controler_1.getForm);
 formRouter.post('/delete', form_controler_1.deleteForm);
 exports.default = formRouter;
 //# sourceMappingURL=formRouter.js.map
