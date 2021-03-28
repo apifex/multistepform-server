@@ -18,8 +18,10 @@ interface IUser {
 
 interface IUserDocument extends IUser, mongoose.Document {
     generateJWT(): string,
+    passwordToHash(): void,
     validatePassword(password: string): Promise<boolean>,
-    toAuthJSON(): Promise<IUser>
+    toAuthJSON(): Promise<IUser>,
+
 } 
 
 interface IUserModel extends mongoose.Model<IUserDocument> {
@@ -77,6 +79,12 @@ UserSchema.methods.validatePassword = async function (password) {
         .toString("hex");
     return this.hash === hash
 }
+
+UserSchema.methods.passwordToHash = function (password) {
+    this.salt = crypto.randomBytes(16).toString("hex");
+    this.hash = crypto
+        .pbkdf2Sync(password, this.salt, 128, 128, "sha512")
+        .toString("hex");}
 
 UserSchema.methods.generateJWT = function () {
 return jwt.sign(

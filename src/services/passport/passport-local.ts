@@ -43,9 +43,10 @@ passport.use("signup",
             .build(
               { userName: req.body.userName, 
                 email: email, 
-                hash: password}
+              }
             )
-            .save();
+          newUser.passwordToHash(password)
+          newUser.save();
             return done(null, newUser);
           } catch (err) {
             return done(err, false, {message: err.message});
