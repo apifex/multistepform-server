@@ -6,7 +6,7 @@ declare global{
             GOOGLE_CLIENT_SECRET: string,
             JWT_PRIVATE_SECRET: string,
             JWT_PUBLIC_SECRET: string,
-            
+            MONGOURL: string
         }
     }
 }
