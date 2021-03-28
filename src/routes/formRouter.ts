@@ -1,13 +1,9 @@
-import express, {NextFunction, Request, Response} from 'express';
+import express from 'express';
 import {createForm, getForm, updateForm, deleteForm} from '../controllers/form-controler'
-import {authenticate} from '../services/passport/authenticate'
+import passport from '../services/passport/passport-jwt'
 
 const formRouter = express.Router();
-
-// formRouter.use((req: Request, res: Response, next: NextFunction)=> {
-//     authenticate(req, res, next)
-//     next();
-// })
+const authenticate = passport.authenticate('jwt', {session: false})
 
 formRouter.post('/create', authenticate, createForm)
 

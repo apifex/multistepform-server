@@ -1,7 +1,7 @@
+import { config } from 'dotenv';
 import {Request} from 'express';
 import passport from 'passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { config } from 'dotenv';
 import UserModel from '../../models/user-model'
 
 config()
@@ -10,8 +10,8 @@ const jwtPublicSecret = process.env.JWT_PUBLIC_SECRET.replace(/\\n/g, "\n")
 
 const cookieExtractor = (req: Request)  => {
   let token = null;
-  if (req && req.cookies.jwt) {
-    token = req.cookies.jwt;
+  if (req && req.cookies.msfToken) {
+    token = req.cookies.msfToken;
   }
   return token;
 };
@@ -27,21 +27,16 @@ const options = {
 };
 
 passport.use(
-  new Strategy(options, (req: Request, jwtPayload: any, done: any) => {
-    UserModel.findOne({ _id: jwtPayload.id })
-      .then(user => {
-        if (user) {
-          delete user.password;
-          done(null, user);
-        } else {
-          done(null, false);
-        }
-      })
-      .catch(err => {
-        if (err) {
-          return done(err, false);
-        }
-      });
+  new Strategy (options, async (req: Request, jwtPayload: any, done: any) => {
+    try{
+      console.log('options', options)
+      console.log('request', req)
+      console.log('payload', jwtPayload)
+      const user =  await UserModel.findOne({ _id: jwtPayload._id })
+      user?done(null, user):done(null, false)
+    }catch(err) {
+      done(err, false)
+    }
   }),
 );
 

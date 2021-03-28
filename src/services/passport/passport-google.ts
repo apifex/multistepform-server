@@ -1,9 +1,9 @@
-import { config } from "dotenv";
+import { config } from 'dotenv'
 import passport from "passport";
-import {Strategy} from "passport-google-oauth20";
+import { Strategy } from "passport-google-oauth20";
 import UserModel from '../../models/user-model'
 
-const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env;
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_CALLBACK_URL } = process.env;
 
 config();
 
@@ -12,7 +12,7 @@ passport.use(
     {
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:4000/api/user/google/callback",
+      callbackURL: GOOGLE_CALLBACK_URL,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {

@@ -12,10 +12,9 @@ import {connectToDb} from './services/mongoConnection'
 config()
 // configure server
 const PORT = process.env.PORT || 5000
-console.log(PORT)
-console.log(process.env.JWT_PUBLIC_SECRET)
+
 const server = express()
-  server.use(cors())
+  server.use(cors({credentials: true}))
   server.use(express.json())
   server.use(express.urlencoded({extended: true}))
   server.use(cookieParser())
