@@ -1,10 +1,7 @@
 import { config } from 'dotenv'
 import mongoose from 'mongoose'
-import bcrypt from 'bcrypt'
 import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
-
-
 
 config()
 
@@ -32,6 +29,7 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
 
 const jwtPrivateSecret = process.env.JWT_PRIVATE_SECRET.replace(/\\n/g, "\n")
 
+//
 const UserSchema = new mongoose.Schema<IUserDocument, IUserModel>({
     userName: {
         type: String,
@@ -44,8 +42,7 @@ const UserSchema = new mongoose.Schema<IUserDocument, IUserModel>({
         unique: true},
     googleId: {
         type: String,
-        required: false,
-        unique: true},
+        required: false},
     hash: {type: String},
     salt: {type: String},
     createdOn: {
@@ -63,7 +60,8 @@ const UserSchema = new mongoose.Schema<IUserDocument, IUserModel>({
 })
 
 UserSchema.pre('save', async function (next) {
-    if (!this.hash || !this.isModified('local.hash')) return next;
+    if (!this.hash || !this.isModified('local.hash')) {console.log('nie hasujemyu')
+       return next};
     this.salt = crypto.randomBytes(16).toString("hex");
     this.hash = crypto
         .pbkdf2Sync(this.hash, this.salt, 128, 128, "sha512")

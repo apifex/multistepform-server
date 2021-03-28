@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   backend:
-    container_name: backend
+    container_name: msf-server
     restart: always
     image: msf-server:latest
     ports: 
@@ -13,7 +13,7 @@ services:
   
 
   mongo:
-    container_name: mongo
+    container_name: mongodb
     restart: always
     image: mongo:4.2.0
     volumes:
