@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import userRouter from './routes/userRouter'
 import formRouter from './routes/formRouter'
 import clientRouter from './routes/clientRouter'
-import {userErrorsHandler, formErrorsHandler} from './services/errorHandler'
+import {formErrorsHandler} from './services/errorHandler'
 import {connectToDb} from './services/mongoConnection'
 
 config()
@@ -24,8 +24,9 @@ const server = express()
   server.use('/api/client', clientRouter)
   server.use('/api/user', userRouter) 
   server.use('/api/form', formRouter) //auth.required 
+  
   server.use(formErrorsHandler)
-  server.use(userErrorsHandler)
+  
 
   
   

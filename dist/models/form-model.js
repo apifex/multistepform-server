@@ -39,24 +39,36 @@ const From = {
         }
     ]
 };
-const FormSchema = new mongoose_1.default.Schema({
-    userId: {
+const ElementSchema = new mongoose_1.default.Schema({
+    element: {
         type: String,
-        required: true
+        required: true,
     },
+    label: { type: String },
+    options: [mongoose_1.Schema.Types.Mixed],
+    placeholder: { type: String },
+    properties: { type: mongoose_1.Schema.Types.Mixed }
+});
+const StepSchema = new mongoose_1.default.Schema({
+    elements: [ElementSchema]
+});
+const FormSchema = new mongoose_1.default.Schema({
     name: {
         type: String,
         required: true
     },
-    steps: {
-        type: mongoose_1.Schema.Types.Mixed,
-        required: true
+    steps: [StepSchema],
+    owner: {
+        type: String,
     },
-    style: {
-        type: mongoose_1.Schema.Types.Mixed,
-        required: false,
+    createdOn: {
+        type: Date,
+        default: Date.now()
     },
 });
+FormSchema.methods.addOwner = function (owner) {
+    this.owner = owner;
+};
 FormSchema.statics.build = (args) => {
     return new FormModel(args);
 };

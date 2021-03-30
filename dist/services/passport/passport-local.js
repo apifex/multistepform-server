@@ -18,50 +18,41 @@ const user_model_1 = __importDefault(require("../../models/user-model"));
 const authFields = {
     usernameField: 'email',
     passwordField: 'password',
-    passReqToCallback: true,
+    session: false,
+    passReqToCallback: true
 };
-passport_1.default.use('login', new passport_local_1.Strategy(authFields, (req, email, password, cb) => __awaiter(void 0, void 0, void 0, function* () {
+passport_1.default.use("login", new passport_local_1.Strategy(authFields, (req, email, password, done) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = yield user_model_1.default.findOne({
-            $or: [{ email }, { userName: email }],
-        });
-        if (!user || !user.password) {
-            return cb(null, false, { message: 'Incorrect email or password.' });
+        const user = yield user_model_1.default.findOne({ email: email });
+        if (!user || !user.validatePassword(password)) {
+            return done(null, false, { message: "Invalid email or password" });
         }
-        const checkPassword = yield user.comparePassword(password);
-        if (!checkPassword) {
-            return cb(null, false, { message: 'Incorrect email or password.' });
-        }
-        return cb(null, user, { message: 'Logged In Successfully' });
+        return done(null, user);
     }
-    catch (err) {
-        return cb(null, false, { message: err.message });
+    catch (error) {
+        return done(error);
     }
 })));
-passport_1.default.use('signup', new passport_local_1.Strategy(authFields, (req, email, password, cb) => __awaiter(void 0, void 0, void 0, function* () {
+passport_1.default.use("signup", new passport_local_1.Strategy(authFields, (req, email, password, done) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log('fire sign up');
         const checkEmail = yield user_model_1.default.checkExistingField('email', email);
         if (checkEmail) {
-            return cb(null, false, {
-                message: 'Email already registered, log in instead',
-            });
+            throw new Error('Email already registered, log in instead');
         }
         const checkUserName = yield user_model_1.default.checkExistingField('userName', req.body.userName);
         if (checkUserName) {
-            return cb(null, false, {
-                message: 'Username exists, please try another',
-            });
+            throw new Error('Username exists, please try another');
         }
         const newUser = yield user_model_1.default
             .build({ userName: req.body.userName,
-            email: req.body.email,
-            password: req.body.password })
-            .save();
-        return cb(null, newUser);
+            email: email,
+        });
+        newUser.passwordToHash(password);
+        newUser.save();
+        return done(null, newUser);
     }
     catch (err) {
-        return cb(null, false, { message: err.message });
+        return done(err, false, { message: err.message });
     }
 })));
 exports.default = passport_1.default;

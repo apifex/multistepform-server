@@ -23,7 +23,6 @@ passport.use(
         
         if (!profile.emails) return
         const email = profile.emails[0].value;
-        const userName = profile.emails[0].value;
 
         const checkEmail = await UserModel.checkExistingField("email", email);
         if (checkEmail) {
@@ -37,14 +36,12 @@ passport.use(
 
         const userObj = new UserModel({
           googleId: profile.id,
-          userName,
           email,
         });
 
         const user = await userObj.save({ validateBeforeSave: false });
         return done(null, user, { statusCode: 201 });
       } catch (err) {
-        
         done(err, false);
       }
     }

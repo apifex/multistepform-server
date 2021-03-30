@@ -6,7 +6,6 @@ import jwt from 'jsonwebtoken'
 config()
 
 interface IUser {
-    userName: string,
     email: string,
     hash?: string,
     salt?: string,
@@ -21,7 +20,6 @@ interface IUserDocument extends IUser, mongoose.Document {
     passwordToHash(): void,
     validatePassword(password: string): Promise<boolean>,
     toAuthJSON(): Promise<IUser>,
-
 } 
 
 interface IUserModel extends mongoose.Model<IUserDocument> {
@@ -31,13 +29,7 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
 
 const jwtPrivateSecret = process.env.JWT_PRIVATE_SECRET.replace(/\\n/g, "\n")
 
-//
 const UserSchema = new mongoose.Schema<IUserDocument, IUserModel>({
-    userName: {
-        type: String,
-        required: [true, 'Name is required'],
-        unique: true
-    },
     email: {
         type: String,
         required: [true, 'Email is required'],
@@ -59,17 +51,6 @@ const UserSchema = new mongoose.Schema<IUserDocument, IUserModel>({
         type: Array,
         default: [],
     }
-})
-
-UserSchema.pre('save', async function (next) {
-    if (!this.hash || !this.isModified('local.hash')) {console.log('nie hasujemyu')
-       return next};
-    this.salt = crypto.randomBytes(16).toString("hex");
-    this.hash = crypto
-        .pbkdf2Sync(this.hash, this.salt, 128, 128, "sha512")
-        .toString("hex");
-    
-    next()
 })
 
 UserSchema.methods.validatePassword = async function (password) {
@@ -97,7 +78,6 @@ return jwt.sign(
 UserSchema.methods.toAuthJSON = function (token) {
     return {
         _id: this._id,
-        userName: this.userName,
         googleId: this.googleId,
         email: this.email,
         token: token,

@@ -1,29 +1,9 @@
 import {NextFunction, Request, Response} from 'express';
 import UserModel from '../models/user-model'
 
-// const createCookieFromToken = (user: any, statusCode: number, req: Request, res: Response) => {
-//   const token = user.generateJWT();
-//   const cookieOptions = {
-//     expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
-//     httpOnly: false,
-//     secure: req.secure || req.headers["x-forwarded-proto"] === "http",
-//     sameSite: 'lax'
-//   };
-  
-//   res.cookie("msfToken", token)
-//   res.status(statusCode).json({
-//     status: "success",
-//     token,
-//     data: {
-//       user,
-//     },
-//   });
-// };
-
 export const localAuth = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user: any = req.user
-    console.log('user in local auth', user)
     if (!user) return
     const token = user.generateJWT()
     const userToJson = user.toAuthJSON(token)

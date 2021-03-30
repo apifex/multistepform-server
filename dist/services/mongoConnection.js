@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.connectToDb = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
-const connectionString = process.env.MONGOURL || 'mongodb://mongo:27017';
+const connectionString = process.env.MONGOURL;
 const connectToDb = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const connection = yield mongoose_1.default.connect(connectionString, { useCreateIndex: true,

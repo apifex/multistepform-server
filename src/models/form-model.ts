@@ -1,6 +1,7 @@
-import mongoose, { Schema }from 'mongoose'
+import mongoose, { Document, Types, Schema }from 'mongoose'
 
 //form sample
+
 const From = {
   name: 'Form123',
   steps: [
@@ -23,55 +24,75 @@ const From = {
 interface IProperties {
     [key: string]: string;
   }
-  
-interface IStyle {
-    [key: string]: string
-  }
-//TO DO update types!!
-interface IElement {
-    id: string,
+
+interface IElement extends Types.EmbeddedDocument{
     element: string;
-    description?: string;
+    label?: string;
     options?: string[];
-    text?: string;
+    placeholder?: string;
     properties?: IProperties;
-    style?: IStyle;
+  }
+
+interface IStep extends Types.EmbeddedDocument{
+  elements: Types.DocumentArray<IElement>
   }
   
 export interface IForm {
-    userId: string;
     name: string;
-    steps: IElement[];
-    style?: IStyle;
+    steps: Types.DocumentArray<IStep>;
+    owner: string;
+    createdOn: Date
   }
-  
-interface IFormModelInterface extends mongoose.Model<any> {
+
+
+interface IFormDocument extends IForm, mongoose.Document {
+    addOwner(): void
+} 
+
+interface IFormModel extends mongoose.Model<IFormDocument> {
     build(args: IForm): any
 }
 
-const FormSchema = new mongoose.Schema({
-    id: {
-      type: String,
-      required: true
-    },
+
+
+const ElementSchema = new mongoose.Schema({
+  element: {
+    type: String,
+    required: true,
+  },
+  label: {type: String},
+  options: [Schema.Types.Mixed],
+  placeholder: {type: String},
+  properties: {type: Schema.Types.Mixed}
+})
+
+const StepSchema = new mongoose.Schema({
+  elements: [ElementSchema]
+})
+
+const FormSchema = new mongoose.Schema<IFormDocument, IFormModel>({
     name: {
         type: String,
         required: true
     },
-    steps: {
-        type: Schema.Types.Mixed,
-        required: true
+    steps: [StepSchema],
+    owner: {
+      type: String,
     },
-    style: {
-        type: Schema.Types.Mixed,
-        required: false,
-    },
+    createdOn: {
+      type: Date,
+      default: Date.now()
+  },
 })
+
+FormSchema.methods.addOwner = function (owner) {
+    this.owner = owner
+  }
 
 FormSchema.statics.build = (args: IForm) => {
     return new FormModel(args)
-}
+  }
 
-const FormModel = mongoose.model<any, IFormModelInterface>('Form', FormSchema)
+const FormModel = mongoose.model<IFormDocument, IFormModel>('Form', FormSchema)
 
 export default FormModel

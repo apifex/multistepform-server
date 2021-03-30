@@ -30,7 +30,7 @@ passport.use(
   new Strategy (options, async (req: Request, jwtPayload: any, done: any) => {
     try{
       const user =  await UserModel.findOne({ _id: jwtPayload._id })
-      user?done(null, user):done(null, false)
+      user?done(null, user.toAuthJSON()):done(null, false)
     }catch(err) {
       done(err, false)
     }

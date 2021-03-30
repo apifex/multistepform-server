@@ -4,7 +4,7 @@
   "description": "server",
   "main": "dist/app.js",
   "scripts": {
-    "postinstall": "tsc"
+    "start": "tsc && node dist/app.js"
   },
   "engines": {
     "node": "14.15.3"

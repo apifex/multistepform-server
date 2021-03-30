@@ -34,15 +34,10 @@ passport.use("signup",
             throw new Error('Email already registered, log in instead')
           }
 
-          const checkUserName = await UserModel.checkExistingField('userName', req.body.userName);
-          if (checkUserName) {
-            throw new Error('Username exists, please try another')
-          }
-
           const newUser = await UserModel
             .build(
-              { userName: req.body.userName, 
-                email: email, 
+              { 
+                email: email
               }
             )
           newUser.passwordToHash(password)

@@ -9,13 +9,77 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.signIn = exports.signUp = void 0;
-const signUp = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    res.status(200).send('signUp');
+exports.protectedRoute = exports.googleAuth = exports.localAuth = void 0;
+// const createCookieFromToken = (user: any, statusCode: number, req: Request, res: Response) => {
+//   const token = user.generateJWT();
+//   const cookieOptions = {
+//     expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+//     httpOnly: false,
+//     secure: req.secure || req.headers["x-forwarded-proto"] === "http",
+//     sameSite: 'lax'
+//   };
+//   res.cookie("msfToken", token)
+//   res.status(statusCode).json({
+//     status: "success",
+//     token,
+//     data: {
+//       user,
+//     },
+//   });
+// };
+const localAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = req.user;
+        if (!user)
+            return;
+        const token = user.generateJWT();
+        const userToJson = user.toAuthJSON(token);
+        res.status(200).json({
+            status: "success",
+            token,
+            data: userToJson
+        });
+    }
+    catch (err) {
+        res.status(500).json({
+            status: 'error',
+            error: {
+                message: err.message,
+            },
+        });
+    }
 });
-exports.signUp = signUp;
-const signIn = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    res.status(200).send('signIn');
+exports.localAuth = localAuth;
+const googleAuth = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = req.user;
+        if (!user)
+            return;
+        const token = user.generateJWT();
+        const userToJson = user.toAuthJSON(token);
+        res.status(200).json({
+            status: "success",
+            token,
+            data: userToJson
+        });
+    }
+    catch (err) {
+        res.status(500).json({
+            status: 'error',
+            error: {
+                message: err.message,
+            },
+        });
+    }
 });
-exports.signIn = signIn;
+exports.googleAuth = googleAuth;
+const protectedRoute = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.status(200).json({
+        status: "success",
+        data: {
+            message: "Welcome in secret place",
+        },
+    });
+});
+exports.protectedRoute = protectedRoute;
 //# sourceMappingURL=user-controler.js.map

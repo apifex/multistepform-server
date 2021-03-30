@@ -1,17 +1,25 @@
-import express from 'express';
-import {createForm, getForm, updateForm, deleteForm} from '../controllers/form-controler'
+import express, {NextFunction, Request, Response} from 'express';
+import {createForm, createStep, createElement, editForm, editStep, editElement} from '../controllers/form-controler'
 import passport from '../services/passport/passport-jwt'
 
 const formRouter = express.Router();
 const authenticate = passport.authenticate('jwt', {session: false})
 
-formRouter.post('/create', authenticate, createForm)
+formRouter.post('/createForm', createForm)
 
-formRouter.post('/update', authenticate, updateForm)
+formRouter.post('/createStep', authenticate, createStep)
 
-formRouter.get('/get', authenticate, getForm)
+formRouter.post('/createElement', authenticate, createElement)
 
-formRouter.post('/delete', authenticate, deleteForm)
+formRouter.post('/editForm', authenticate, editForm)
+
+formRouter.post('/editStep', authenticate, editStep)
+
+formRouter.post('/editElement', authenticate, editElement)
+
+// formRouter.post('/load', getForm)
+
+// formRouter.post('/delete', deleteForm)
   
 export default formRouter;
 

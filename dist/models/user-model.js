@@ -14,10 +14,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = require("dotenv");
 const mongoose_1 = __importDefault(require("mongoose"));
-const bcrypt_1 = __importDefault(require("bcrypt"));
+const crypto_1 = __importDefault(require("crypto"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 dotenv_1.config();
-const jwtPrivateSecret = process.env.JWT_PRIVATE_SECRET.replace(/\\n/g, '\n');
+const jwtPrivateSecret = process.env.JWT_PRIVATE_SECRET.replace(/\\n/g, "\n");
+//
 const UserSchema = new mongoose_1.default.Schema({
     userName: {
         type: String,
@@ -27,12 +28,14 @@ const UserSchema = new mongoose_1.default.Schema({
     email: {
         type: String,
         required: [true, 'Email is required'],
-        unique: true,
+        unique: true
     },
-    password: {
+    googleId: {
         type: String,
-        required: [true, 'Password is required'],
+        required: false
     },
+    hash: { type: String },
+    salt: { type: String },
     createdOn: {
         type: Date,
         default: Date.now()
@@ -40,34 +43,40 @@ const UserSchema = new mongoose_1.default.Schema({
     lastActive: {
         type: Date,
         default: Date.now()
+    },
+    forms: {
+        type: Array,
+        default: [],
     }
 });
-UserSchema.pre('save', function (next) {
+UserSchema.methods.validatePassword = function (password) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (!this.password || !this.isModified('password'))
-            return next;
-        this.password = yield bcrypt_1.default.hash(this.password, parseInt(process.env.HASH));
-        next();
-    });
-});
-UserSchema.methods.toJSON = function () {
-    const user = this;
-    const userObject = user.toObject({ transform: (user, ret) => { delete ret.password; return ret; } });
-    console.log('user object test', userObject);
-    return userObject;
-};
-UserSchema.methods.comparePassword = function (password) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (typeof this.password === 'string') {
-            return yield bcrypt_1.default.compare(password, this.password);
-        }
+        if (!this.salt || !this.hash)
+            return;
+        const hash = crypto_1.default
+            .pbkdf2Sync(password, this.salt, 128, 128, "sha512")
+            .toString("hex");
+        return this.hash === hash;
     });
 };
-UserSchema.methods.generateVerificationToken = function () {
-    return jsonwebtoken_1.default.sign({ id: this._id }, jwtPrivateSecret, {
-        expiresIn: "10d",
-        algorithm: "RS256",
-    });
+UserSchema.methods.passwordToHash = function (password) {
+    this.salt = crypto_1.default.randomBytes(16).toString("hex");
+    this.hash = crypto_1.default
+        .pbkdf2Sync(password, this.salt, 128, 128, "sha512")
+        .toString("hex");
+};
+UserSchema.methods.generateJWT = function () {
+    return jsonwebtoken_1.default.sign({ _id: this._id }, jwtPrivateSecret, { expiresIn: "10d",
+        algorithm: "RS256", });
+};
+UserSchema.methods.toAuthJSON = function (token) {
+    return {
+        _id: this._id,
+        userName: this.userName,
+        googleId: this.googleId,
+        email: this.email,
+        token: token,
+    };
 };
 UserSchema.statics.checkExistingField = (field, value) => __awaiter(void 0, void 0, void 0, function* () {
     const checkField = yield UserModel.findOne({ [`${field}`]: value });
