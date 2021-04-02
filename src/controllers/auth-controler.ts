@@ -6,11 +6,9 @@ export const localAuth = async (req: Request, res: Response, next: NextFunction)
     const user: any = req.user
     if (!user) return
     const token = user.generateJWT()
-    const userToJson = user.toAuthJSON(token)
     res.status(200).json({
       status: "success",
-      token,
-      data: userToJson})
+      token})
   } catch(err) {
     res.status(500).json({
       status: 'error',

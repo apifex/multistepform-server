@@ -19,7 +19,7 @@ interface IUserDocument extends IUser, mongoose.Document {
     generateJWT(): string,
     passwordToHash(): void,
     validatePassword(password: string): Promise<boolean>,
-    toAuthJSON(): Promise<IUser>,
+    getId(): Promise<string>,
 } 
 
 interface IUserModel extends mongoose.Model<IUserDocument> {
@@ -75,12 +75,9 @@ return jwt.sign(
     algorithm: "RS256", }
 )};
 
-UserSchema.methods.toAuthJSON = function (token) {
+UserSchema.methods.getId = function () {
     return {
         _id: this._id,
-        googleId: this.googleId,
-        email: this.email,
-        token: token,
     }
 }
 

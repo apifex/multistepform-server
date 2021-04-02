@@ -1,41 +1,43 @@
 import {NextFunction, Request, Response} from 'express';
 import FormModel from '../models/form-model'
+import StepModel from '../models/step-model'
 
 export const createForm = async (req: Request, res: Response, next: NextFunction) => {
     try{
         const form = await FormModel
         .build(req.body)
         form.addOwner(req.user)
-        await form.save()
-    return res.status(200).send({Form: form})
+
+        const savedForm = await form.save()
+    return res.status(200).send(savedForm)
     } catch(error) {
         next(error)
     }  
 }
 
 export const createStep = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const form = await FormModel
-        .findOne({_id: req.query.formid}).exec()
-    if (!form) throw Error('no form with this id')
-        form.steps.splice(req.body.stepPosition, 0, req.body.step)
-        await form.save()
-    return res.status(200).send({Step: form.steps[req.body.stepPosition]})
-    } catch (error) {
+    try{
+        const step = await StepModel
+        .build(req.body)
+        step.addOwner(req.user)
+        await step.save()
+        const form = await FormModel.findById(req.query.formid).exec()
+        if(!form) throw new Error ('No form with this id')
+        form.addStep(step._id)
+    return res.status(200).send(step)
+    } catch(error) {
         next(error)
-    }    
+    }  
 }
 
 export const createElement = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const form = await FormModel
-            .findOne({'steps._id': req.query.stepid}).exec()
-            if (!form) throw new Error('no form with this id')
-        const step =  form.steps.id(req.query.stepid)
+        const step = await StepModel
+            .findOne({_id: req.query.stepid}).exec()
             if (!step) throw new Error('no step with this id')
-            step.elements.splice(req.body.elementPosition, 0 , req.body.element)
-            await form.save()
-    return res.status(200).send({Element: step.elements[req.body.elementPosition]})
+            step.elements.push({$each: [req.body.element], $position: req.body.position})
+        const savedStep = await step.save()
+    return res.status(200).send(savedStep.elements[req.body.position])
     } catch (error) {
         next(error)
     }
@@ -43,26 +45,23 @@ export const createElement = async (req: Request, res: Response, next: NextFunct
 
 export const editForm = async (req: Request, res: Response, next: NextFunction) => {
     try{
-        const form = await FormModel.findOneAndUpdate(
-            {_id: req.query.formid}, 
-            req.body,
-            {new: true}).exec()
-    return res.status(200).send({UpdatedForm: form})
+        const form = await FormModel.findOne({_id: req.query.formid}).exec()
+        if(!form) throw new Error ('No form with this id')
+            form.name = req.body.formName
+        const updatedForm = await form.save()
+    return res.status(200).send(updatedForm)
     } catch(error) {
         next(error)
     }  
 }
 
-export const editStep = async (req: Request, res: Response, next: NextFunction) => {
+export const editStepPosition = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const form = await FormModel
-        .findOne({_id: req.query.formid}).exec()
-    if (!form) throw Error('no form with this id')
-        let step = form.id(req.query.stepid)
-        step = req.body.step
-    if (!step) throw Error('no step with this id')
-        await form.save()
-    return res.status(200).send({Step: form.steps.id(req.query.stepid)})
+        const form = await FormModel.findOne({_id: req.query.formid}).exec()
+    if (!form) throw Error('no step with this id')
+        form.editStepsPosition(req.body.stepid, req.body.position)
+        const updatedForm = await form.save()
+    return res.status(200).send({Form: updatedForm})
     } catch (error) {
         next(error)
     }    
@@ -70,22 +69,50 @@ export const editStep = async (req: Request, res: Response, next: NextFunction) 
 
 export const editElement = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const form = await FormModel
-            .findOne({'steps._id': req.query.stepid}).exec()
-            if (!form) throw new Error('no form with this id')
-        const step =  form.steps.id(req.query.stepid)
-            if (!step) throw new Error('no step with this id')
-        let element = step.elements.find((el)=>el._id === req.query.elementid)
-            element = req.body.element
-            await form.save()
-    return res.status(200).send({Element: step.elements.id(req.query.elementid)})
+    const step = await StepModel.findOne({_id: req.query.stepid}).exec()
+        if (!step) throw new Error('no form with this id')
+    step.elements.pull({_id: req.query.elementid})
+    step.elements.splice(req.body.position, 0, req.body.element)
+    const updatedElement = await step.save()
+    return res.status(200).send({Element: updatedElement.elements.id(req.query.elementid)})
     } catch (error) {
         next(error)
     }
 }
 
+export const getForm = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        const form = await FormModel
+        .findById(req.query.formid).exec()
+    if (!form) throw new Error("no form with this id")
+    return res.status(200).send(
+            {[`Form ${req.query.formid}`]: form})
+    } catch(error) {
+        next(error)
+    }  
+}
 
+export const getStep = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        const step = await StepModel
+        .findById(req.query.stepid).exec()
+    if (!step) throw new Error("no step with this id")
+    return res.status(200).send(
+            {[`Step ${req.query.stepid}`]: step})
+    } catch(error) {
+        next(error)
+    }  
+}
 
-
-
+export const getFormList = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        const forms = await FormModel
+        .find({owner: req.user}).exec()
+    if (!forms) throw new Error("no forms found")
+    return res.status(200).send(
+            {Forms: forms})
+    } catch(error) {
+        next(error)
+    }  
+}
 

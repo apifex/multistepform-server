@@ -4,7 +4,6 @@ import passportGoogle from '../services/passport/passport-google'
 import {localAuth, protectedRoute, googleAuth} from '../controllers/auth-controler'
 const userRouter = express.Router();
 
-
 userRouter.post('/login', passport.authenticate('login', {session: false}), localAuth)
 
 userRouter.post('/signup', passport.authenticate('signup', {session: false}), localAuth)

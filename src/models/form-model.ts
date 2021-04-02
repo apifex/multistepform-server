@@ -1,81 +1,30 @@
-import mongoose, { Document, Types, Schema }from 'mongoose'
-
-//form sample
-
-const From = {
-  name: 'Form123',
-  steps: [
-    {
-      id: '11',
-      elements: [{element: 'input', type: 'text', label: 'Imię'}, 
-                 {element: 'input', type: 'checkbox', label: "Lubisz spać?"},  
-                ]
-    },
-    {
-      id: '12',
-      elements: [{element: 'input', type: 'text'}, 
-                 {element: 'input', type: 'checkbox'}, 
-                 {element: 'input', type: 'password'} 
-                ]
-    }
-  ]
-}
-
-interface IProperties {
-    [key: string]: string;
-  }
-
-interface IElement extends Types.EmbeddedDocument{
-    element: string;
-    label?: string;
-    options?: string[];
-    placeholder?: string;
-    properties?: IProperties;
-  }
-
-interface IStep extends Types.EmbeddedDocument{
-  elements: Types.DocumentArray<IElement>
-  }
+import { Document, Types, Schema, model, Model }from 'mongoose'
   
 export interface IForm {
     name: string;
-    steps: Types.DocumentArray<IStep>;
+    steps: [string];
     owner: string;
     createdOn: Date
   }
 
-
-interface IFormDocument extends IForm, mongoose.Document {
-    addOwner(): void
+interface IFormDocument extends IForm, Document {
+    addOwner(): void,
+    addStep(stepId: string, position?: number): void,
+    editStepsPosition(stepId: string, position: number): void,
 } 
 
-interface IFormModel extends mongoose.Model<IFormDocument> {
+interface IFormModel extends Model<IFormDocument> {
     build(args: IForm): any
 }
-
-
-
-const ElementSchema = new mongoose.Schema({
-  element: {
-    type: String,
-    required: true,
-  },
-  label: {type: String},
-  options: [Schema.Types.Mixed],
-  placeholder: {type: String},
-  properties: {type: Schema.Types.Mixed}
-})
-
-const StepSchema = new mongoose.Schema({
-  elements: [ElementSchema]
-})
-
-const FormSchema = new mongoose.Schema<IFormDocument, IFormModel>({
+const FormSchema = new Schema<IFormDocument, IFormModel>({
     name: {
-        type: String,
-        required: true
+      type: String,
+      required: true
     },
-    steps: [StepSchema],
+    steps: {
+      type: Array,
+      default: [],
+    },
     owner: {
       type: String,
     },
@@ -85,14 +34,23 @@ const FormSchema = new mongoose.Schema<IFormDocument, IFormModel>({
   },
 })
 
-FormSchema.methods.addOwner = function (owner) {
+FormSchema.methods.addOwner = function (owner: string) {
     this.owner = owner
   }
+
+FormSchema.methods.addStep = function (stepId: string, position?: number) {
+  this.steps.splice(position = 0, 0, stepId)
+}
+
+FormSchema.methods.editStepsPosition = function(stepId: string, newPosition: number) {
+  this.steps.filter(el=>el!=stepId)
+  this.steps.splice(newPosition, 0, stepId)
+}
 
 FormSchema.statics.build = (args: IForm) => {
     return new FormModel(args)
   }
 
-const FormModel = mongoose.model<IFormDocument, IFormModel>('Form', FormSchema)
+const FormModel = model<IFormDocument, IFormModel>('Form', FormSchema)
 
 export default FormModel

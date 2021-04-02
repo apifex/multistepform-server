@@ -11,7 +11,7 @@ export const connectToDb = async () => {
             })
         console.log('db connection', connection.connection.readyState)
     } catch (error) {
-        console.log(error) //TODO handleError
+        console.log('error from db', error) //TODO handleError
     }
 }
 

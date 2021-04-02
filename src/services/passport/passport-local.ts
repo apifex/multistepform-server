@@ -1,3 +1,4 @@
+import { isValidObjectId } from 'mongoose';
 import passport from 'passport';
 import { Strategy } from 'passport-local'
 import UserModel from '../../models/user-model'
@@ -6,16 +7,18 @@ const authFields = {
     usernameField: 'email',
     passwordField: 'password',
     session: false,
-    passReqToCallback: true as true
+    passReqToCallback: true as true,
   };
 
 passport.use("login", 
   new Strategy(
-      authFields, async (req, email, password, done) => {
+      authFields, async (req, username, password, done) => {
         try {
-          const user = await UserModel.findOne({email: email})
-          if (!user || !user.validatePassword(password)) {
-            return done(null, false, { message: "Invalid email or password"})
+          const user = await UserModel.findOne({email: username})
+          if (!user) throw new Error('No found user')
+          const validatePassword = await user.validatePassword(password)
+          if (!validatePassword) {
+            throw new Error('Invalid user or password')
           }
           return done(null, user)          
         } catch (error) {
@@ -33,7 +36,6 @@ passport.use("signup",
           if (checkEmail) {
             throw new Error('Email already registered, log in instead')
           }
-
           const newUser = await UserModel
             .build(
               { 
@@ -41,7 +43,7 @@ passport.use("signup",
               }
             )
           newUser.passwordToHash(password)
-          newUser.save();
+          await newUser.save();
             return done(null, newUser);
           } catch (err) {
             return done(err, false, {message: err.message});

@@ -23,14 +23,11 @@ const server = express()
   
   server.use('/api/client', clientRouter)
   server.use('/api/user', userRouter) 
-  server.use('/api/form', formRouter) //auth.required 
+  server.use('/api/form', formRouter) //auth required
   
   server.use(formErrorsHandler)
-  
 
-  
-  
-// test
+  // test
   server.get('/test', (req, res)=> {res.send('server works')})
   
 // connect to db
