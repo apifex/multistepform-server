@@ -10,6 +10,11 @@ interface IUser {
     hash?: string,
     salt?: string,
     googleId?: string,
+    tokens?: {
+        access_token: string,
+        refresh_token: string,
+        expires_in: string
+    }
     createdOn?: Date,
     lastActive?: Date,
     forms?: string[]
@@ -42,6 +47,9 @@ const UserSchema = new mongoose.Schema<IUserDocument, IUserModel>({
     createdOn: {
         type: Date,
         default: Date.now()
+    },
+    tokens: {
+         type: mongoose.Schema.Types.Mixed,
     },
     lastActive: {
         type: Date,

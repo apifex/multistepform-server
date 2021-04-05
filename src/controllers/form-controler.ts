@@ -2,12 +2,12 @@ import {NextFunction, Request, Response} from 'express';
 import FormModel from '../models/form-model'
 import StepModel from '../models/step-model'
 
+
 export const createForm = async (req: Request, res: Response, next: NextFunction) => {
     try{
         const form = await FormModel
         .build(req.body)
         form.addOwner(req.user)
-
         const savedForm = await form.save()
     return res.status(200).send(savedForm)
     } catch(error) {
@@ -17,12 +17,12 @@ export const createForm = async (req: Request, res: Response, next: NextFunction
 
 export const createStep = async (req: Request, res: Response, next: NextFunction) => {
     try{
+        const form = await FormModel.findById(req.query.formid).exec()
+        if(!form || form.owner != req.user) throw new Error ('No form with this id')
         const step = await StepModel
         .build(req.body)
         step.addOwner(req.user)
         await step.save()
-        const form = await FormModel.findById(req.query.formid).exec()
-        if(!form) throw new Error ('No form with this id')
         form.addStep(step._id)
     return res.status(200).send(step)
     } catch(error) {
@@ -34,7 +34,7 @@ export const createElement = async (req: Request, res: Response, next: NextFunct
     try {
         const step = await StepModel
             .findOne({_id: req.query.stepid}).exec()
-            if (!step) throw new Error('no step with this id')
+            if (!step || step.owner != req.user) throw new Error('no step with this id')
             step.elements.push({$each: [req.body.element], $position: req.body.position})
         const savedStep = await step.save()
     return res.status(200).send(savedStep.elements[req.body.position])
@@ -46,8 +46,8 @@ export const createElement = async (req: Request, res: Response, next: NextFunct
 export const editForm = async (req: Request, res: Response, next: NextFunction) => {
     try{
         const form = await FormModel.findOne({_id: req.query.formid}).exec()
-        if(!form) throw new Error ('No form with this id')
-            form.name = req.body.formName
+        if(!form || form.owner != req.user) return new Error ('No form with this id')
+            form.name = req.body.name
         const updatedForm = await form.save()
     return res.status(200).send(updatedForm)
     } catch(error) {
@@ -58,7 +58,7 @@ export const editForm = async (req: Request, res: Response, next: NextFunction) 
 export const editStepPosition = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const form = await FormModel.findOne({_id: req.query.formid}).exec()
-    if (!form) throw Error('no step with this id')
+    if (!form || form.owner != req.user) throw Error('no step with this id')
         form.editStepsPosition(req.body.stepid, req.body.position)
         const updatedForm = await form.save()
     return res.status(200).send({Form: updatedForm})
