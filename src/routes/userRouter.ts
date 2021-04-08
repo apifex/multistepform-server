@@ -9,9 +9,9 @@ userRouter.post('/login', passport.authenticate('login', {session: false}), loca
 
 userRouter.post('/signup', passport.authenticate('signup', {session: false}), localAuth)
 
-userRouter.post('/delete', deleteUser)
+userRouter.post('/delete', passport.authenticate('jwt', {session: false}), deleteUser)
 
-userRouter.post('/getuserinfo', getUserInfo)
+userRouter.get('/getuserinfo', passport.authenticate('jwt', {session: false}), getUserInfo)
 
 userRouter.get("/google", 
     passportGoogle.authenticate('google', {accessType: 'offline',

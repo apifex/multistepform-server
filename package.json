@@ -5,6 +5,7 @@
   "main": "dist/app.js",
   "scripts": {
     "postinstall": "tsc"
+    
   },
   "engines": {
     "node": "14.15.3"

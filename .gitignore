@@ -1,5 +1,8 @@
+/dist
 /node_modules
 /aws
 keys.md
 .env
 /data
+/testhtml
+

@@ -32,7 +32,7 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
 
 export const getUserInfo = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = await UserModel.findOne({email: req.body.email}).exec()
+    const user = await UserModel.findOne({_id: req.user}).exec()
     res.status(200).json({user: user})
 
   } catch(err) {

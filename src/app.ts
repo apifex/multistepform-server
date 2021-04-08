@@ -33,6 +33,6 @@ const server = express()
   
 // connect to db
 connectToDb().then(()=>
-  server.listen(PORT, ()=> console.log(`listening on port ${PORT}`))
+  server.listen(PORT, ()=> console.log(`listening on ${PORT}`))
 )
 

@@ -5,7 +5,7 @@ interface IProperties {
     [key: string]: string;
   }
 
-interface IElement extends Types.EmbeddedDocument{
+export interface IElement extends Types.EmbeddedDocument{
     element: string;
     label?: string;
     options?: string[];
