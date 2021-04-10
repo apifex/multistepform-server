@@ -55,6 +55,17 @@ export const editForm = async (req: Request, res: Response, next: NextFunction) 
     }  
 }
 
+export const deleteForm = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+    await FormModel.deleteOne({_id: req.query.formid}).exec()
+    return res.status(200).send('Form deleted')
+    } catch(error) {
+        next(error)
+    }  
+}
+
+
+
 export const editStepPosition = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const form = await FormModel.findOne({_id: req.query.formid}).exec()
@@ -67,6 +78,19 @@ export const editStepPosition = async (req: Request, res: Response, next: NextFu
     }    
 }
 
+export const deleteStep = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+    const form = await FormModel.findOne({_id: req.query.formid}).exec()
+    if (!form || form.owner != req.user) throw Error('no step with this id')
+        form.editStepsPosition(req.body.stepid)
+        const updatedForm = await form.save()
+    await StepModel.deleteOne({_id: req.query.stepid}).exec()
+    return res.status(200).send({Form: updatedForm})
+    } catch(error) {
+        next(error)
+    }  
+}
+
 export const editElement = async (req: Request, res: Response, next: NextFunction) => {
     try {
     const step = await StepModel.findOne({_id: req.query.stepid}).exec()
@@ -75,6 +99,18 @@ export const editElement = async (req: Request, res: Response, next: NextFunctio
     step.elements.splice(req.body.position, 0, req.body.element)
     const updatedElement = await step.save()
     return res.status(200).send({Element: updatedElement.elements.id(req.query.elementid)})
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const deleteElement = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+    const step = await StepModel.findOne({_id: req.query.stepid}).exec()
+        if (!step) throw new Error('no form with this id')
+    step.elements.pull({_id: req.query.elementid})
+    const updatedElement = await step.save()
+    return res.status(200).send("Element deleted")
     } catch (error) {
         next(error)
     }
