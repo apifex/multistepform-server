@@ -24,6 +24,7 @@ export const createStep = async (req: Request, res: Response, next: NextFunction
         step.addOwner(req.user)
         await step.save()
         form.addStep(step._id)
+        form.save()
     return res.status(200).send(step)
     } catch(error) {
         next(error)
