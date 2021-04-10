@@ -38,8 +38,8 @@ FormSchema.methods.addOwner = function (owner: string) {
     this.owner = owner
   }
 
-FormSchema.methods.addStep = function (stepId: string, position?: number) {
-  this.steps.splice(position = 0, 0, stepId)
+FormSchema.methods.addStep = function (stepId: string, position: number = 0) {
+  this.steps.splice(position, 0, stepId)
 }
 
 FormSchema.methods.editStepsPosition = function(stepId: string, newPosition: number) {
