@@ -28,7 +28,8 @@ export const googleAuth =  async (req: Request, res: Response) => {
       res.status(200).json({
         status: "success",
         email: user.email,
-        token})
+        token}).redirect('/test')
+      
     } catch (err) {
       res.status(500).json({
         status: 'error',
