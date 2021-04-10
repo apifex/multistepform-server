@@ -19,11 +19,10 @@ export const createStep = async (req: Request, res: Response, next: NextFunction
     try{
         const form = await FormModel.findOne({_id: req.query.formid}).exec()
         if(!form || form.owner != req.user) throw new Error ('No form with this id')
-        const step = await StepModel
-        .build(req.body)
-        step.addOwner(req.user)
+        const step = new StepModel()
+        step.addOwner(req.user as string)
         await step.save()
-        form.addStep(step._id)
+        form.addStep(step._id, req.body.position)
         await form.save()
     return res.status(200).send(step)
     } catch(error) {
