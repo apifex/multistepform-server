@@ -10,12 +10,12 @@ Logowanie:
         
         Response: 
         {status: "success", token}
-//
+
         url: api/user/google 
         methode: GET, 
         wchodzisz i leci sobie flow google a dostajesz  przekierowanie i Response na api/user/google/callback : 
         {status: "success", token}
-//
+
         url: api/user/login 
         methode: POST, 
         req.body: {email: 'janek@gmail.com', password: 'hello'} 
@@ -36,7 +36,7 @@ Obsługa form:
                 "name": "form123",
                 "__v": 0
                 }
-//
+
         url: api/form/createStep
         req.query: formid=6063865289abc8002662ff89
         req.body: 
@@ -50,7 +50,7 @@ Obsługa form:
                 "owner": "6071fbed622b3f001bd38680",
                 "__v": 0
                 }
-//
+
         url: api/form/createElement
         req.query: stepid=6063865289abc8002662ff89
         req.body: 
@@ -74,7 +74,7 @@ Obsługa form:
                         "label": "hello",
                         "placeholder": "wybierz"
                 }]
-//
+
         url: api/form/editForm
         req.query: formid=6063865289abc8002662ff89
         req.body: {name: "form43"} <== nowa nazwa formy
@@ -90,7 +90,7 @@ Obsługa form:
                 "owner": "6071fbed622b3f001bd38680",
                 "__v": 19
                 }
-//
+
         url: api/form/editStep
         req.query: formid=6063865289abc8002662ff89 & stepid=3865289abc8002662
         req.body: 
@@ -109,7 +109,7 @@ Obsługa form:
                 "owner": "6071fbed622b3f001bd38680",
                 "__v": 19
                 }
-//
+
         url: api/form/editElement
         req.query: stepid=6063865289abc8002662ff89 & elementid=63865289abc8
         req.body: 
@@ -132,17 +132,17 @@ Obsługa form:
                         "label": "hello",
                         "placeholder": "wybierz"
                 }]
-//
+
         url: api/form/deleteform
         req.query: formid=6063865289abc8002662ff8
         
         Response: 'form deleted'
-//
+
         url: api/form/deletestep
         req.query: formid=b6063865289abc8002662ff8 & stepid=6063865289abc8002662ff8
         
         Response: Form bez step ktory zostal usuniety
-//
+
         url: api/form/deleteelement
         req.query: stepid=607370940a23860026bea328 & elementid=607370940a23860026bea328
         
@@ -155,7 +155,7 @@ dla poniższych metoda GET, w req.headers Bearer Token
         req.query: formid=484465
 
         Response: form
-//
+
         url: api/form/getformlist
 
         Response: [
@@ -179,7 +179,7 @@ dla poniższych metoda GET, w req.headers Bearer Token
                         "owner": "6072a2e9e1cf010025a4bbf5",
                         "__v": 0
                 }]
-//
+
         url: api/form/getstep
         req.query: stepid=484465
 
