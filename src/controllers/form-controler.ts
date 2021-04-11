@@ -82,7 +82,7 @@ export const deleteStep = async (req: Request, res: Response, next: NextFunction
     try{
     const form = await FormModel.findOne({_id: req.query.formid}).exec()
     if (!form || form.owner != req.user) throw Error('no step with this id')
-        form.deleteStep(req.query.stepid as string)
+        form.editStepsPosition(req.query.stepid as string)
         const updatedForm = await form.save()
     await StepModel.deleteOne({_id: req.query.stepid}).exec()
     return res.status(200).send({Form: updatedForm})
@@ -110,7 +110,7 @@ export const deleteElement = async (req: Request, res: Response, next: NextFunct
         if (!step) throw new Error('no form with this id')
     step.elements.pull({_id: req.query.elementid})
     const updatedElement = await step.save()
-    return res.status(200).send("Element deleted")
+    return res.status(200).send(updatedElement)
     } catch (error) {
         next(error)
     }
