@@ -1,36 +1,35 @@
-import express, {NextFunction, Request, Response} from 'express';
-import {createForm, createStep, createElement, editForm,
-     editStepPosition, editElement, deleteElement, deleteForm, deleteStep,
-     getForm, getFormList, getStep} from '../controllers/form-controler'
+import express from 'express';
+import FormActions from '../controllers/form-controler'
 import {createSpreadsheet, saveToSheet, formatSheet} from '../controllers/sheets-controler'
 import passport from '../services/passport/passport-jwt'
 
 const formRouter = express.Router();
+
 const authenticate = passport.authenticate('jwt', {session: false})
 
-formRouter.post('/createForm', authenticate, createForm)
+formRouter.post('/createForm', authenticate, FormActions.createForm)
 
-formRouter.post('/createStep', authenticate, createStep)
+formRouter.post('/createStep', authenticate, FormActions.createStep)
 
-formRouter.post('/createElement', authenticate, createElement)
+formRouter.post('/createElement', authenticate, FormActions.createElement)
 
-formRouter.post('/editForm', authenticate, editForm)
+formRouter.post('/editForm', authenticate, FormActions.editForm)
 
-formRouter.post('/deleteForm', authenticate, deleteForm)
+formRouter.post('/deleteForm', authenticate, FormActions.deleteForm)
 
-formRouter.post('/editStep', authenticate, editStepPosition)
+formRouter.post('/editStep', authenticate, FormActions.editStepPosition)
 
-formRouter.post('/deleteStep', authenticate, deleteStep)
+formRouter.post('/deleteStep', authenticate, FormActions.deleteStep)
 
-formRouter.post('/editElement', authenticate, editElement)
+formRouter.post('/editElement', authenticate, FormActions.editElement)
 
-formRouter.post('/deleteElement', authenticate, deleteElement)
+formRouter.post('/deleteElement', authenticate, FormActions.deleteElement)
 
-formRouter.get('/getForm', authenticate, getForm)
+formRouter.get('/getForm', authenticate, FormActions.getForm)
 
-formRouter.get('/getFormList', authenticate, getFormList)
+formRouter.get('/getFormList', authenticate, FormActions.getFormList)
 
-formRouter.get('/getStep', authenticate, getStep)
+formRouter.get('/getStep', authenticate, FormActions.getStep)
 
 formRouter.post('/createSpreadsheet', authenticate, createSpreadsheet)
 
