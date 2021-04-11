@@ -11,6 +11,7 @@ interface IFormDocument extends IForm, Document {
     addOwner(): void,
     addStep(stepId: string, position?: number): void,
     editStepsPosition(stepId: string, position?: number): void,
+    deleteStep(stepId: string): void,
 } 
 
 interface IFormModel extends Model<IFormDocument> {
@@ -46,6 +47,10 @@ FormSchema.methods.addStep = function (stepId: string, position?: number) {
 FormSchema.methods.editStepsPosition = function(stepId: string, newPosition: number) {
   this.steps.filter(el=>el!=stepId)
   if (newPosition) this.steps.splice(newPosition, 0, stepId)
+}
+
+FormSchema.methods.deleteStep = function(stepId: string) {
+  this.steps.filter(el => el !== stepId)
 }
 
 FormSchema.statics.build = (args: IForm) => {
