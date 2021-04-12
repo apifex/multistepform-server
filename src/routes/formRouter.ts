@@ -56,6 +56,8 @@ formRouter.get('/getForm', authenticate, FormActions.getForm)
 
 formRouter.get('/getFullForm', authenticate, FormActions.getFullForm)
 
+formRouter.get('/getAllSteps', authenticate, FormActions.getAllSteps)
+
 formRouter.get('/getFormList', authenticate, FormActions.getFormList)
 
 formRouter.get('/getStep', authenticate, FormActions.getStep)

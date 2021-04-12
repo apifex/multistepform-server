@@ -137,6 +137,20 @@ class FormActions {
             }) 
     }
 
+    getAllSteps = async (req: Request, res: Response, next: NextFunction) => {
+        this.errorHandler(next, async () => {
+                const form = await FormModel
+                .findById(req.query.formid).exec()
+                if (!form) throw new Error("no form with this id")
+                const steps: any = []
+                await Promise.all( form.steps.map(async (step)=>
+                            {steps.push(await StepModel.findById(step).exec())}
+                        )
+                    )
+                return res.status(200).send(steps)
+            }) 
+    }
+
     getStep = async (req: Request, res: Response, next: NextFunction) => {
         this.errorHandler(next, async () => {
                 const step = await StepModel
