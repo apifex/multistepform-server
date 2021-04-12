@@ -156,6 +156,11 @@ dla poniższych metoda GET, w req.headers Bearer Token
 
         Response: form
 
+        url: api/form/getfullform
+        req.query: formid=484465
+
+        Response: form z wszystkimi stepami i elementami
+
         url: api/form/getformlist
 
         Response: [

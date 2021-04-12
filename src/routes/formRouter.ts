@@ -7,6 +7,33 @@ const formRouter = express.Router();
 
 const authenticate = passport.authenticate('jwt', {session: false})
 
+// const actions = {
+//     createForm: {
+//         method: 'post',
+//         url: '/createForm',
+//         authenticate: authenticate,
+//         action: FormActions.createForm
+//     },
+//     getForm: {
+//         method: 'get',
+//         url: '/getForm',
+//         authenticate: authenticate,
+//         action: FormActions.getForm
+//     },
+// }
+
+// const createRouter = (actions: any) => {
+//     const values = Object.values(actions)
+//     const router = express.Router();
+//     //@ts-ignore
+//     for (const {method, url, authenticate, action} of values) {
+//         if (method === 'get') router.get(url, authenticate, action)
+//         if (method === 'post') router.post(url, authenticate, action)
+//     }
+//     return router
+// }
+// createRouter(actions)
+
 formRouter.post('/createForm', authenticate, FormActions.createForm)
 
 formRouter.post('/createStep', authenticate, FormActions.createStep)
@@ -26,6 +53,8 @@ formRouter.post('/editElement', authenticate, FormActions.editElement)
 formRouter.post('/deleteElement', authenticate, FormActions.deleteElement)
 
 formRouter.get('/getForm', authenticate, FormActions.getForm)
+
+formRouter.get('/getFullForm', authenticate, FormActions.getFullForm)
 
 formRouter.get('/getFormList', authenticate, FormActions.getFormList)
 
