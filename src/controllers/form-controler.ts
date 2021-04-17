@@ -122,11 +122,10 @@ class FormActions {
                 .findById(req.query.formid).exec()
                 if (!form) throw new Error("no form with this id")
                 const steps: any = []
-                const stepsPromises = await Promise.all( form.steps.map(async (step)=>
-                            {await StepModel.findById(step).exec()}
+                await Promise.all( form.steps.map(async (step)=>
+                            {steps.push(await StepModel.findById(step).exec())}
                         )
                     )
-                stepsPromises.forEach(step => steps.push(step))
                 return res.status(200).send({
                     steps: steps,
                     createdOn: form.createdOn,
