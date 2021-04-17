@@ -9,6 +9,7 @@ export interface IElement extends Types.EmbeddedDocument{
     element: string;
     label?: string;
     options?: string[];
+    styles?: {};
     placeholder?: string;
     properties?: IProperties;
   }
@@ -32,6 +33,7 @@ const ElementSchema = new Schema({
     required: true,
   },
   label: {type: String},
+  styles: {type: Schema.Types.Mixed},
   options: [Schema.Types.Mixed],
   placeholder: {type: String},
   properties: {type: Schema.Types.Mixed}
