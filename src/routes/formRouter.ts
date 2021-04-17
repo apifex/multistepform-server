@@ -67,10 +67,6 @@ formRouter.post('/createSpreadsheet', authenticate, createSpreadsheet)
 formRouter.post('/saveToSheet', authenticate, saveToSheet)
 
 formRouter.post('/formatSheet', authenticate, formatSheet)
-
-// formRouter.post('/load', getForm)
-
-// formRouter.post('/delete', deleteForm)
   
 export default formRouter;
 
