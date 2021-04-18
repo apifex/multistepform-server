@@ -7,7 +7,17 @@ const formRouter = express.Router();
 
 const authenticate = passport.authenticate('jwt', {session: false})
 
-// const actions = {
+
+// interface IActions {
+//     [key: string]: {
+//         method: string,
+//         url: string,
+//         authenticate: any,
+//         action: any
+//     }
+// }
+
+// const actions: IActions = {
 //     createForm: {
 //         method: 'post',
 //         url: '/createForm',
@@ -22,16 +32,17 @@ const authenticate = passport.authenticate('jwt', {session: false})
 //     },
 // }
 
-// const createRouter = (actions: any) => {
+// const createRouter = (actions: IActions) => {
+//     console.log('creatign router')
 //     const values = Object.values(actions)
 //     const router = express.Router();
-//     //@ts-ignore
 //     for (const {method, url, authenticate, action} of values) {
 //         if (method === 'get') router.get(url, authenticate, action)
 //         if (method === 'post') router.post(url, authenticate, action)
 //     }
 //     return router
 // }
+
 // createRouter(actions)
 
 formRouter.post('/createForm', authenticate, FormActions.createForm)

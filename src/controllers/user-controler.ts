@@ -17,8 +17,7 @@ export const editUser = async (req: Request, res: Response, next: NextFunction) 
 export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = await UserModel.findOneAndDelete({email: req.body.email}).exec()
-    console.log(user)
-
+    if (user) res.status(200).send("user deleted")
   } catch(err) {
     res.status(500).json({
       status: 'error',

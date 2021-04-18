@@ -4,14 +4,16 @@ const connectionString =  process.env.MONGOURL
 
 export const connectToDb = async () => {
     try {
-        const connection = await mongoose.connect(connectionString, 
+        console.log('connecting to database ...')
+        await mongoose.connect(connectionString, 
             {useCreateIndex: true,
             useNewUrlParser: true,
             useUnifiedTopology: true
             })
-        console.log('db connection', connection.connection.readyState)
+        return true
     } catch (error) {
-        console.log('error from db', error) //TODO handleError
+        console.log('Error when connecting to database')
+        return false
     }
 }
 

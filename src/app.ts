@@ -32,7 +32,17 @@ const server = express()
   server.get('/test', (req, res)=> {res.send('server works')})
   
 // connect to db
-connectToDb().then(()=>
-  server.listen(PORT, ()=> console.log(`listening on ${PORT}`))
-)
+let reconnect:number = 0
+const startServer = () => {
+  connectToDb().then((res)=>{
+    if (res) {server.listen(PORT, ()=> console.log(`Listening on ${PORT}`))} 
+    else {
+      if (reconnect<3) {startServer(); reconnect++} 
+      else console.log('Not possible to connect to database. Server stoped')}})
+  .catch(err=>console.log('Error', err))
+}
+
+startServer()
+
+
 

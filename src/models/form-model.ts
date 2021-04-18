@@ -19,7 +19,7 @@ interface IFormModel extends Model<IFormDocument> {
 const FormSchema = new Schema<IFormDocument, IFormModel>({
     name: {
       type: String,
-      required: true
+      required: true,
     },
     steps: {
       type: Array,

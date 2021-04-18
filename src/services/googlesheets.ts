@@ -5,9 +5,7 @@ import UserModel from '../models/user-model'
 config()
 
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_CALLBACK_URL } = process.env;
-const oauth2client = new google.auth.OAuth2(GOOGLE_CLIENT_ID, 
-    GOOGLE_CLIENT_SECRET, 
-    GOOGLE_CALLBACK_URL)
+const oauth2client = new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_CALLBACK_URL)
 
 
 const authorize = async (userId: string) => {
