@@ -156,10 +156,9 @@ class FormActions {
                     .findById(req.query.formid).exec()
                 if (!form) throw new FormError('No form with this id', 404)
                 const steps: any = []
-                await Promise.all( form.steps.map(async (step)=>
-                            {steps.push(await StepModel.findById(step).exec())}
-                        )
-                    )
+                const promisses = form.steps.map((step)=> StepModel.findById(step).exec())
+                const resolved = await Promise.all(promisses)
+                    resolved.forEach(step=> steps.push(step))
                 return res.status(200).send(steps)
             }) 
     }
@@ -181,6 +180,22 @@ class FormActions {
                 return res.status(200).send(forms)
             })  
     }
+
+    // publishForm = async (req: Request, res: Response, next: NextFunction) => {
+    //     this.errorHandler(next, async () => {
+    //         const form = await FormModel
+    //                 .findById(req.query.formid).exec()
+    //             if (!form) throw new FormError('No form with this id', 404)
+    //         const clientToken = form.generateJWT()
+    //         return res.status(200).send(
+    //             {
+    //                 clientToken: clientToken,
+    //                 //TO DO sheets url
+    //                 googleSheetsUrl: 'to do'
+    //             }
+    //         )
+    //     })
+    // }
 }
 
 export default new FormActions()
