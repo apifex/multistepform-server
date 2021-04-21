@@ -226,7 +226,7 @@ class FormActions {
         this.errorHandler(next, async () => {
                 const form = await FormModel
                     .findById(req.query.formid).exec()
-                if (!form  || form._id != req.user) throw new FormError('No form with this id', 404)
+                if (!form) throw new FormError('No form with this id', 404)
                 const steps: any = []
                 const promisses = form.steps.map((step)=> StepModel.findById(step).exec())
                 const resolved = await Promise.all(promisses)
