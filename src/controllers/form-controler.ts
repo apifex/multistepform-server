@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response} from 'express';
 import FormModel from '../models/form-model'
 import StepModel from '../models/step-model'
+import {create, format, appendRow} from '../services/googlesheets'
 
 interface FormError extends Error {
     code: number
@@ -44,6 +45,8 @@ class FormActions {
                 step.addOwner(req.user as string)
                 await step.save()
                 form.addStep(step._id, req.body.position)
+                console.log(req.body.position)
+                console.log(typeof req.body.position)
                 await form.save()
                 return res.status(201).send(step)
             })
@@ -83,7 +86,7 @@ class FormActions {
     editElement = async (req: Request, res: Response, next: NextFunction) => {
         this.errorHandler(next, async () => {
                 const step = await StepModel.findOne({_id: req.query.stepid}).exec()
-                if (!step) throw new FormError('No step with this id', 404)
+                if (!step  || step.owner != req.user) throw new FormError('No step with this id', 404)
                 step.elements.pull({_id: req.query.elementid})
                 step.elements.splice(req.body.position, 0, req.body.element)
                 await step.save()
@@ -113,7 +116,7 @@ class FormActions {
     deleteElement = async (req: Request, res: Response, next: NextFunction) => {
         this.errorHandler(next, async () => {
                 const step = await StepModel.findOne({_id: req.query.stepid}).exec()
-                if (!step) throw new FormError('No step with this id', 404)
+                if (!step  || step.owner != req.user) throw new FormError('No step with this id', 404)
                 if (!step.elements.find(el=>el._id == req.query.elementid)) throw new FormError('No elments with this id', 404)
                 step.elements.pull({_id: req.query.elementid})
                 await step.save()
@@ -125,7 +128,7 @@ class FormActions {
         this.errorHandler(next, async () => {
                 const form = await FormModel
                     .findById(req.query.formid).exec()
-                if (!form) throw new Error("no form with this id")
+                if (!form  || form.owner != req.user) throw new Error("no form with this id")
                 return res.status(200).send(form)
             }) 
     }
@@ -134,7 +137,7 @@ class FormActions {
         this.errorHandler(next, async () => {
                 const form = await FormModel
                     .findById(req.query.formid).exec()
-                if (!form) throw new FormError('No form with this id', 404)
+                if (!form  || form.owner != req.user) throw new FormError('No form with this id', 404)
                 const steps: any = []
                 const promisses = form.steps.map((step)=> StepModel.findById(step).exec())
                 const resolved = await Promise.all(promisses)
@@ -150,11 +153,12 @@ class FormActions {
             }) 
     }
 
+    
     getAllSteps = async (req: Request, res: Response, next: NextFunction) => {
         this.errorHandler(next, async () => {
                 const form = await FormModel
                     .findById(req.query.formid).exec()
-                if (!form) throw new FormError('No form with this id', 404)
+                if (!form  || form.owner != req.user) throw new FormError('No form with this id', 404)
                 const steps: any = []
                 const promisses = form.steps.map((step)=> StepModel.findById(step).exec())
                 const resolved = await Promise.all(promisses)
@@ -167,12 +171,12 @@ class FormActions {
         this.errorHandler(next, async () => {
                 const step = await StepModel
                     .findById(req.query.stepid).exec()
-                if (!step) throw new FormError('No step with this id', 404)
+                if (!step  || step.owner != req.user) throw new FormError('No step with this id', 404)
                 return res.status(200).send(step)
             }) 
     }
     
-    getFormList = async (req: Request, res: Response, next: NextFunction) => {
+    getUserForms = async (req: Request, res: Response, next: NextFunction) => {
         this.errorHandler(next, async () => {
                 const forms = await FormModel
                     .find({owner: req.user}).exec()
@@ -181,21 +185,59 @@ class FormActions {
             })  
     }
 
-    // publishForm = async (req: Request, res: Response, next: NextFunction) => {
-    //     this.errorHandler(next, async () => {
-    //         const form = await FormModel
-    //                 .findById(req.query.formid).exec()
-    //             if (!form) throw new FormError('No form with this id', 404)
-    //         const clientToken = form.generateJWT()
-    //         return res.status(200).send(
-    //             {
-    //                 clientToken: clientToken,
-    //                 //TO DO sheets url
-    //                 googleSheetsUrl: 'to do'
-    //             }
-    //         )
-    //     })
-    // }
+    publishForm = async (req: Request, res: Response, next: NextFunction) => {
+        this.errorHandler(next, async () => {
+            const form = await FormModel
+                    .findById(req.query.formid).exec()
+                if (!form || form.owner != req.user) throw new FormError('No form with this id', 404)
+            const clientToken = form.generateJWT()
+            const createSheet = await create(req.user as string, form.name)
+            if (!createSheet?.spreadsheetUrl || !createSheet?.spreedsheetId) throw new FormError('Error when creating google Sheet', 500)
+            const formatSheet = await format(req.user as string, createSheet.spreedsheetId)
+            console.log('formatsheet', formatSheet)
+            await appendRow(req.user as string, createSheet.spreedsheetId, ['hellos'])
+            form.sheetUrl = createSheet.spreadsheetUrl
+            form.sheetId = createSheet.spreedsheetId
+            form.status = 'published'
+            const publishedForm = await form.save()
+            return res.status(200).send(
+                {
+                    form: form.name,
+                    clientToken: clientToken,
+                    status: publishedForm.status,
+                    googleSheetsUrl: createSheet?.spreadsheetUrl
+                }
+            )
+        })
+    }
+
+    closeForm = async (req: Request, res: Response, next: NextFunction) => {
+        this.errorHandler(next, async () => {
+            const form = await FormModel
+                    .findById(req.query.formid).exec()
+                if (!form || form.owner != req.user) throw new FormError('No form with this id', 404)
+            form.status = 'closed'
+            const closed = await form.save()
+            return res.status(200).send(closed.status)
+        })
+    }
+
+    loadForm = async (req: Request, res: Response, next: NextFunction) => {
+        this.errorHandler(next, async () => {
+                const form = await FormModel
+                    .findById(req.query.formid).exec()
+                if (!form  || form._id != req.user) throw new FormError('No form with this id', 404)
+                const steps: any = []
+                const promisses = form.steps.map((step)=> StepModel.findById(step).exec())
+                const resolved = await Promise.all(promisses)
+                    resolved.forEach(step=> steps.push(step))
+                return res.status(200).send({
+                    name: form.name,
+                    steps: steps,
+                    _id: form._id,
+                })
+            }) 
+    }
 }
 
 export default new FormActions()

@@ -161,7 +161,7 @@ dla poniższych metoda GET, w req.headers Bearer Token
 
         Response: form z wszystkimi stepami i elementami
 
-        url: api/form/getformlist
+        url: api/form/getuserforms
 
         Response: [
                 {

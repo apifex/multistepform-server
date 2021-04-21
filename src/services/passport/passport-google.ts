@@ -45,7 +45,7 @@ passport.use(
         const userObj = new UserModel({
           googleId: profile.id,
           email,
-          tokens: {
+          googleTokens: {
             access_token: accessToken,
             refresh_token: refreshToken,
             expires_in: params.expires_in

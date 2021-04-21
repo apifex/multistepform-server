@@ -25,11 +25,11 @@ export const googleAuth =  async (req: Request, res: Response) => {
       const user = await UserModel.findOne({_id: req.user}).exec()
       if (!user) return
       const token = user.generateJWT()
+      
       res.status(200).json({
         status: "success",
         email: user.email,
         token})
-      
     } catch (err) {
       res.status(500).json({
         status: 'error',

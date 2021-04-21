@@ -69,7 +69,7 @@ formRouter.get('/getFullForm', authenticate, FormActions.getFullForm)
 
 formRouter.get('/getAllSteps', authenticate, FormActions.getAllSteps)
 
-formRouter.get('/getFormList', authenticate, FormActions.getFormList)
+formRouter.get('/getUserForms', authenticate, FormActions.getUserForms)
 
 formRouter.get('/getStep', authenticate, FormActions.getStep)
 

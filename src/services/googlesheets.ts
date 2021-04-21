@@ -10,10 +10,9 @@ const oauth2client = new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECR
 
 const authorize = async (userId: string) => {
     const user = await UserModel.findOne({_id: userId})
-    if (!user || !user.tokens) return
-    //ToDO connect to google
-    // if (!user.tokens) connectToGoogle()
-    oauth2client.setCredentials(user.tokens)
+    if (!user) return
+    if (!user.googleTokens) throw new Error ('No google tokens. Need to connect with google')
+    oauth2client.setCredentials(user.googleTokens)
     return google.sheets({version: 'v4', auth: oauth2client})
     }
 
