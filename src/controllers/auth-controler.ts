@@ -29,7 +29,7 @@ export const googleAuth =  async (req: Request, res: Response) => {
         token: user.generateJWT()
         }
       res.cookie('token', user.generateJWT(), {maxAge: 999999999999, httpOnly: true})
-      res.redirect(`http://localhost:3000/login`)
+      res.redirect(`http://localhost:3000/login25`)
       // res.status(200).json({
         // status: "success",
         // email: user.email,
