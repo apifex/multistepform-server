@@ -1,7 +1,7 @@
 import express, {NextFunction, Request, Response} from 'express';
 import passport from '../services/passport/passport-local'
 import passportGoogle from '../services/passport/passport-google'
-import {localAuth, protectedRoute, googleAuth} from '../controllers/auth-controler'
+import {localAuth, googleAuth} from '../controllers/auth-controler'
 import {deleteUser, getUserInfo} from '../controllers/user-controler'
 const userRouter = express.Router();
 
