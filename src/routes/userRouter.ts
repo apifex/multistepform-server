@@ -26,7 +26,7 @@ userRouter.get('/google/callback',
     googleAuth
     );
 
-userRouter.get('/restricted', passport.authenticate('jwt', {session: false}) , protectedRoute)
+// userRouter.get('/restricted', passport.authenticate('jwt', {session: false}) , protectedRoute)
 
 
 export default userRouter;
