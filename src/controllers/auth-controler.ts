@@ -28,7 +28,7 @@ export const googleAuth =  async (req: Request, res: Response) => {
         email: user.email,
         token: user.generateJWT()
         }
-      res.cookie('token', JSON.stringify(credentials))
+      res.cookie('token', user.generateJWT())
       res.redirect(`http://localhost:3000/admin`)
       // res.status(200).json({
         // status: "success",
