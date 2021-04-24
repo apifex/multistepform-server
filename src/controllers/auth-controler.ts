@@ -24,17 +24,17 @@ export const googleAuth =  async (req: Request, res: Response) => {
     try {
       const user = await UserModel.findOne({_id: req.user}).exec()
       if (!user) return
-      const credentials = {
+      // const credentials = {
+      //   email: user.email,
+      //   token: user.generateJWT()
+      //   }
+      const token = user.generateJWT()
+      // res.cookie('token', token, {sameSite: 'lax', httpOnly: true, secure: true, maxAge: 60*10})
+      // res.redirect(`http://localhost:3000/login?token=${token}`)
+      res.status(200).json({
+        status: "success with google ",
         email: user.email,
-        token: user.generateJWT()
-        }
-        let token = user.generateJWT()
-      res.cookie('token', token, {sameSite: 'lax', httpOnly: true, secure: true, maxAge: 60*10})
-      res.redirect(`http://localhost:3000/login?token=${token}`)
-      // res.status(200).json({
-        // status: "success",
-        // email: user.email,
-        // token})
+        token: token})
     } catch (err) {
       res.status(500).json({
         status: 'error',
